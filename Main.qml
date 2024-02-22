@@ -24,9 +24,14 @@ Window {
 
                 anchors.centerIn: parent
 
-                Keys.onSpacePressed: video.playbackState
-                                     == MediaPlayer.PlayingState ? video.pause(
-                                                                       ) : video.play()
+                function playPause() {
+                    if (playbackState == MediaPlayer.PlayingState)
+                        video.pause()
+                    else
+                        video.play()
+                }
+
+                Keys.onSpacePressed: playPause()
 
                 CropRectangle {
                     id: cropRect
@@ -37,6 +42,15 @@ Window {
         }
 
         RowLayout {
+            Button {
+                // TODO: use State
+                text: video.playbackState == MediaPlayer.PlayingState ? "\u2016" : "\u25B6"
+                onClicked: video.playPause()
+
+                Layout.preferredWidth: 30
+                Layout.preferredHeight: 30
+            }
+
             Slider {
                 id: videoProgress
 
@@ -45,15 +59,14 @@ Window {
                 value: video.position
                 Layout.fillWidth: true
 
-                onMoved: {
-                    video.position = value
-                }
+                onMoved: video.position = value
             }
 
             Button {
-                text: "Crop"
+                text: qsTr("Crop")
                 onClicked: eee.crop(cropRect.cropX, cropRect.cropY,
                                     cropRect.cropWidth, cropRect.cropHeight)
+                Layout.preferredHeight: 30
             }
         }
     }
