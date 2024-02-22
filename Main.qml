@@ -29,21 +29,31 @@ Window {
                                                                        ) : video.play()
 
                 CropRectangle {
+                    id: cropRect
+
                     anchors.fill: parent
                 }
             }
         }
 
-        Slider {
-            id: videoProgress
+        RowLayout {
+            Slider {
+                id: videoProgress
 
-            from: 0
-            to: video.duration
-            value: video.position
-            Layout.fillWidth: true
+                from: 0
+                to: video.duration
+                value: video.position
+                Layout.fillWidth: true
 
-            onMoved: {
-                video.position = value
+                onMoved: {
+                    video.position = value
+                }
+            }
+
+            Button {
+                text: "Crop"
+                onClicked: eee.crop(cropRect.cropX, cropRect.cropY,
+                                    cropRect.cropWidth, cropRect.cropHeight)
             }
         }
     }
