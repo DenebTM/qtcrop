@@ -72,7 +72,19 @@ int main(int argc, char *argv[]) {
       &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
       Qt::QueuedConnection);
 
-  ColonThree eee("/home/deneb/Videos/boxdance.mp4");
+  // TODO: do this via UI
+  std::string filename;
+  if (argc >= 2) {
+    filename = std::string(argv[1]);
+  } else {
+    std::cout << "Video filename: ";
+    fflush(stdout);
+    getline(std::cin, filename);
+    filename = filename.substr(0, filename.find_last_of('\n'));
+  }
+  std::cout << filename << std::endl;
+
+  ColonThree eee(filename);
   engine.rootContext()->setContextProperty(u"eee"_qs, &eee);
 
   engine.load(QUrl(u"qrc:/vcrop/Main.qml"_qs));

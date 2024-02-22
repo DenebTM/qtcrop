@@ -19,7 +19,7 @@ Window {
 
             Video {
                 id: video
-                source: "file:///home/deneb/Videos/boxdance.mp4"
+                source: "file://" + eee.filename
                 focus: true
 
                 anchors.centerIn: parent
