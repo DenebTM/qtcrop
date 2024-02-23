@@ -18,7 +18,7 @@ Window {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 0
+        spacing: 5
 
         Item {
             Layout.fillWidth: true
@@ -51,6 +51,8 @@ Window {
         }
 
         RowLayout {
+            Layout.margins: parent.spacing
+
             Button {
                 // TODO: use State
                 text: video.playbackState == MediaPlayer.PlayingState ? "\u2016" : "\u25B6"
