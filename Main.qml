@@ -9,11 +9,18 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
+    SystemPalette {
+        id: palette
+        colorGroup: SystemPalette.Active
+    }
+
+    color: palette.window
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        Rectangle {
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -37,6 +44,8 @@ Window {
                     id: cropRect
 
                     anchors.fill: parent
+
+                    dragHandleColor: palette.highlight
                 }
             }
         }
