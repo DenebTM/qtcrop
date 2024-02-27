@@ -5,7 +5,8 @@ Window {
     width: 640
     height: 480
     visible: true
-    title: qsTr("Hello World")
+    title: qsTr("vcrop: ") + (videoLoader.item ? videoLoader.item.ctx.filename : qsTr(
+                                                     "No file"))
 
     SystemPalette {
         id: palette
@@ -26,7 +27,7 @@ Window {
     Loader {
         id: videoLoader
         source: "CropInterface.qml"
-        active: false
+        active: ctx.filename.length > 0
         onLoaded: item.ctx = ctx
 
         anchors.fill: parent
