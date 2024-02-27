@@ -17,6 +17,10 @@ qt_add_qml_module(appvcrop
     VERSION 1.0
     QML_FILES Main.qml
     QML_FILES CropRectangle.qml
+    QML_FILES
+    QML_FILES Welcome.qml
+    QML_FILES CropInterface.qml
+    SOURCES context_obj.h
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
