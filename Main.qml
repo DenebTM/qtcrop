@@ -16,6 +16,8 @@ Window {
 
     color: palette.window
 
+    onClosing: video.stop()
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 5
