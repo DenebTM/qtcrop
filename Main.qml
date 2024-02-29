@@ -5,7 +5,7 @@ Window {
     width: 640
     height: 480
     visible: true
-    title: qsTr("vcrop: ") + (videoLoader.item ? videoLoader.item.ctx.filename : qsTr(
+    title: qsTr("qtcrop: ") + (videoLoader.item ? videoLoader.item.ctx.filename : qsTr(
                                                      "No file"))
 
     SystemPalette {

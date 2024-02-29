@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   ContextObj ctx(filename);
   engine.rootContext()->setContextProperty(u"ctx"_qs, &ctx);
 
-  engine.load(QUrl(u"qrc:/vcrop/Main.qml"_qs));
+  engine.load(QUrl(u"qrc:/qtcrop/Main.qml"_qs));
 
   return app.exec();
 }
