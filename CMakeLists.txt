@@ -21,6 +21,7 @@ qt_add_qml_module(qtqrop
     QML_FILES Welcome.qml
     QML_FILES CropInterface.qml
     SOURCES context_obj.h
+    QML_FILES TrimProgressBar.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

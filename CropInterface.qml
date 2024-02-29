@@ -88,19 +88,31 @@ ColumnLayout {
             Layout.preferredHeight: 30
         }
 
-        Slider {
+        // Slider {
+        //     id: videoProgress
+
+        //     from: 0
+        //     to: video.duration
+        //     value: video.position
+        //     Layout.fillWidth: true
+
+        //     onMoved: video.position = value
+        // }
+        TrimProgressBar {
             id: videoProgress
+
+            Layout.fillWidth: true
 
             from: 0
             to: video.duration
             value: video.position
-            Layout.fillWidth: true
 
-            onMoved: video.position = value
+            trimStart: video.duration * 0.2
+            trimEnd: video.duration * 0.8
         }
 
         Button {
-            text: qsTr("Crop")
+            text: qsTr("Save")
             onClicked: {
                 const scale = video.getScale()
                 const outRect = {
