@@ -18,9 +18,35 @@ ColumnLayout {
 
             source: "file://" + ctx.filename
 
+            function getScale() {
+                const resolution = metaData.value(MediaMetaData.Resolution)
+                if (typeof resolution === 'undefined')
+                    return 1
+
+                return resolution.width / parent.width
+            }
+
+            function getSize() {
+                const resolution = metaData.value(MediaMetaData.Resolution)
+                if (typeof resolution === 'undefined')
+                    return [0, 0]
+
+                const aspect = resolution.height / resolution.width
+
+                let outWidth = parent.width
+                let outHeight = outWidth * aspect
+
+                if (outHeight > parent.height) {
+                    outHeight = parent.height
+                    outWidth = outHeight / aspect
+                }
+
+                return [outWidth, outHeight]
+            }
+
             anchors.centerIn: parent
-            width: metaData.value(MediaMetaData.Resolution).width ?? 0
-            height: metaData.value(MediaMetaData.Resolution).height ?? 0
+            width: getSize()[0]
+            height: getSize()[1]
 
             function playPause() {
                 if (playbackState == MediaPlayer.PlayingState)
@@ -75,8 +101,18 @@ ColumnLayout {
 
         Button {
             text: qsTr("Crop")
-            onClicked: ctx.crop(cropRect.cropX, cropRect.cropY,
-                                cropRect.cropWidth, cropRect.cropHeight)
+            onClicked: {
+                const scale = video.getScale()
+                const outRect = {
+                    "x": cropRect.cropX,
+                    "y": cropRect.cropY,
+                    "width": cropRect.cropWidth * scale,
+                    "height": cropRect.cropHeight * scale
+                }
+
+                ctx.crop(outRect.x, outRect.y, outRect.width, outRect.height)
+            }
+
             Layout.preferredHeight: 30
         }
     }
