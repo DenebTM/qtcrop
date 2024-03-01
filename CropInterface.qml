@@ -85,8 +85,7 @@ ColumnLayout {
 
         Button {
             // TODO: use State
-            text: (video
-                   && video.playbackState === MediaPlayer.PlayingState) ? "\u2016" : "\u25B6"
+            text: video.playbackState === MediaPlayer.PlayingState ? "\u2016" : "\u25B6"
             onClicked: video.playPause()
 
             Layout.preferredWidth: 30
