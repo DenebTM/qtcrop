@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import QtMultimedia
 
 ColumnLayout {
+    id: root
+
     // context object
     property var ctx
 
@@ -16,7 +18,7 @@ ColumnLayout {
         Video {
             id: video
 
-            source: "file://" + ctx.filename
+            source: "file://" + root.ctx.filename
 
             function getScale() {
                 const resolution = metaData.value(MediaMetaData.Resolution)
@@ -122,7 +124,8 @@ ColumnLayout {
                     "height": cropRect.cropHeight * scale
                 }
 
-                ctx.crop(outRect.x, outRect.y, outRect.width, outRect.height)
+                root.ctx.crop(outRect.x, outRect.y, outRect.width,
+                              outRect.height)
             }
 
             Layout.preferredHeight: 30

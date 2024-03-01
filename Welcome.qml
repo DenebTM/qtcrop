@@ -5,6 +5,8 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 ColumnLayout {
+    id: root
+
     // context object
     property var ctx
 
@@ -27,7 +29,7 @@ ColumnLayout {
 
             onAccepted: {
                 const url = new URL(selectedFile)
-                ctx.filename = url.pathname
+                root.ctx.filename = url.pathname
                 videoLoader.active = true
             }
         }
