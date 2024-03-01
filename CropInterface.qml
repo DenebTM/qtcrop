@@ -25,7 +25,7 @@ ColumnLayout {
                 if (typeof resolution === 'undefined')
                     return 1
 
-                return resolution.width / parent.width
+                return resolution.width / getSize().width
             }
 
             function getSize() {
@@ -43,12 +43,15 @@ ColumnLayout {
                     outWidth = outHeight / aspect
                 }
 
-                return [outWidth, outHeight]
+                return {
+                    "width": outWidth,
+                    "height": outHeight
+                }
             }
 
             anchors.centerIn: parent
-            width: getSize()[0]
-            height: getSize()[1]
+            width: getSize().width
+            height: getSize().height
 
             function playPause() {
                 if (playbackState == MediaPlayer.PlayingState)
@@ -118,10 +121,10 @@ ColumnLayout {
             onClicked: {
                 const scale = video.getScale()
                 const outRect = {
-                    "x": cropRect.cropX,
-                    "y": cropRect.cropY,
-                    "width": cropRect.cropWidth * scale,
-                    "height": cropRect.cropHeight * scale
+                    "x": Math.round(cropRect.cropX * scale),
+                    "y": Math.round(cropRect.cropY * scale),
+                    "width": Math.round(cropRect.cropWidth * scale),
+                    "height": Math.round(cropRect.cropHeight * scale)
                 }
 
                 root.ctx.crop(outRect.x, outRect.y, outRect.width,
