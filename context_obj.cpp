@@ -29,9 +29,6 @@ void ContextObj::crop(int x, int y, int width, int height)
 
     ffmpegProcess->setProgram(program);
     ffmpegProcess->setArguments(args);
-    ffmpegProcess->start();
-
-    ffmpegProcess->waitForStarted(-1);
 
     QObject::connect(ffmpegProcess, &QProcess::finished, this, [this] {
         std::cout << ffmpegProcess->readAllStandardOutput().toStdString();
@@ -41,6 +38,8 @@ void ContextObj::crop(int x, int y, int width, int height)
         emit ffmpegDone();
 
         delete ffmpegProcess;
-        ffmpegProcess = nullptr;
     });
+
+    ffmpegProcess->start();
+    ffmpegProcess->waitForStarted(-1);
 }
