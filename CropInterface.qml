@@ -11,6 +11,11 @@ ColumnLayout {
 
     spacing: 5
 
+    Connections {
+        target: ctx
+        onFfmpegDone: cropButton.enabled = true
+    }
+
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -116,8 +121,12 @@ ColumnLayout {
         }
 
         Button {
+            id: cropButton
+
             text: qsTr("Save")
             onClicked: {
+                enabled = false
+
                 const scale = video.getScale()
                 const outRect = {
                     "x": Math.round(cropRect.cropX * scale),
