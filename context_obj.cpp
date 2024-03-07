@@ -8,82 +8,67 @@
 #include <QStandardPaths>
 
 void ContextObj::chooseFile() {
-    QFileDialog dialog;
+  QFileDialog dialog;
 
-    dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).last());
-    dialog.setMimeTypeFilters({"video/mp4",
-                               "video/quicktime",
-                               "video/x-matroska",
-                               "video/webm",
-                               "video/avi",
-                               "video/mpeg",
-                               "video/x-ms-wmv",
-                               "video/3gpp",
-                               "video/3gpp2"});
+  dialog.setAcceptMode(QFileDialog::AcceptOpen);
+  dialog.setFileMode(QFileDialog::ExistingFile);
+  dialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).constLast());
+  dialog.setMimeTypeFilters({"video/mp4", "video/quicktime", "video/x-matroska", "video/webm", "video/avi",
+                             "video/mpeg", "video/x-ms-wmv", "video/3gpp", "video/3gpp2"});
 
-    const bool accepted = dialog.exec() == QDialog::Accepted;
-    if (accepted && !dialog.selectedFiles().isEmpty()) {
-        setFilename(dialog.selectedFiles().constFirst());
-        emit filenameChanged();
-    }
+  const bool accepted = dialog.exec() == QDialog::Accepted;
+  if (accepted && !dialog.selectedFiles().isEmpty()) {
+    setFilename(dialog.selectedFiles().constFirst());
+    emit filenameChanged();
+  }
 }
 
 void ContextObj::saveCropAs(int x, int y, int width, int height) {
-    QFileDialog dialog;
+  QFileDialog dialog;
 
-    dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDirectoryUrl(QUrl(filename()).adjusted(QUrl::RemoveFilename));
-    dialog.setMimeTypeFilters({"video/mp4",
-                               "video/quicktime",
-                               "video/x-matroska",
-                               "video/webm",
-                               "video/avi",
-                               "video/mpeg",
-                               "video/x-ms-wmv",
-                               "video/3gpp",
-                               "video/3gpp2"});
-    dialog.selectMimeTypeFilter(QMimeDatabase().mimeTypeForFile(filename()).name());
-    dialog.selectFile(filename());
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setDirectoryUrl(QUrl(filename()).adjusted(QUrl::RemoveFilename));
+  dialog.setMimeTypeFilters({"video/mp4", "video/quicktime", "video/x-matroska", "video/webm", "video/avi",
+                             "video/mpeg", "video/x-ms-wmv", "video/3gpp", "video/3gpp2"});
+  dialog.selectMimeTypeFilter(QMimeDatabase().mimeTypeForFile(filename()).name());
+  dialog.selectFile(filename());
 
-    const bool accepted = dialog.exec() == QDialog::Accepted;
-    if (accepted && !dialog.selectedFiles().isEmpty()) {
-        saveCrop(x, y, width, height, dialog.selectedFiles().first());
-    }
+  const bool accepted = dialog.exec() == QDialog::Accepted;
+  if (accepted && !dialog.selectedFiles().isEmpty()) {
+    saveCrop(x, y, width, height, dialog.selectedFiles().constFirst());
+  }
 }
 
-void ContextObj::saveCrop(int x, int y, int width, int height, QString &outFilename)
-{
-    // TODO: handle overwriting input file
-    QString inFilename = filename();
+void ContextObj::saveCrop(int x, int y, int width, int height, const QString &outFilename) {
+  // TODO: handle overwriting input file
+  QString inFilename = filename();
 
-    std::cout << "x: " << x << ", y: " << y << ", w: " << width << ", h: " << height << std::endl;
+  std::cout << "x: " << x << ", y: " << y << ", w: " << width << ", h: " << height << std::endl;
 
-    std::ostringstream cropParams;
-    cropParams << "crop=x=" << x << ":y=" << y << ":w=" << width << ":h=" << height;
+  std::ostringstream cropParams;
+  cropParams << "crop=x=" << x << ":y=" << y << ":w=" << width << ":h=" << height;
 
-    const QString program = "ffmpeg";
-    const QStringList args = QStringList() << "-n"
-                                           << "-i" << inFilename << "-filter:v"
-                                           << QString(cropParams.str().c_str()) << outFilename;
+  const QString program = "ffmpeg";
+  const QStringList args = QStringList() << "-n"
+                                         << "-i" << inFilename << "-filter:v" << QString(cropParams.str().c_str())
+                                         << outFilename;
 
-    ffmpegProcess = new QProcess;
+  ffmpegProcess = new QProcess;
 
-    ffmpegProcess->setProgram(program);
-    ffmpegProcess->setArguments(args);
+  ffmpegProcess->setProgram(program);
+  ffmpegProcess->setArguments(args);
 
-    QObject::connect(ffmpegProcess, &QProcess::finished, this, [this] {
-        std::cout << ffmpegProcess->readAllStandardOutput().toStdString();
-        std::cout << ffmpegProcess->readAllStandardError().toStdString();
-        std::cout << std::endl;
+  QObject::connect(ffmpegProcess, &QProcess::finished, this, [this] {
+    std::cout << ffmpegProcess->readAllStandardOutput().toStdString();
+    std::cout << ffmpegProcess->readAllStandardError().toStdString();
+    std::cout << std::endl;
 
-        emit ffmpegDone();
+    emit ffmpegDone();
 
-        delete ffmpegProcess;
-    });
+    delete ffmpegProcess;
+  });
 
-    ffmpegProcess->start();
-    ffmpegProcess->waitForStarted(-1);
+  ffmpegProcess->start();
+  ffmpegProcess->waitForStarted(-1);
 }
