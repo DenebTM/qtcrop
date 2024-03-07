@@ -13,7 +13,8 @@ ColumnLayout {
 
     Connections {
         target: ctx
-        onFfmpegDone: cropButton.enabled = true
+        onFfmpegDone: saveButton.enabled = true
+        onSaveCancelled: saveButton.enabled = true
     }
 
     Item {
@@ -121,7 +122,7 @@ ColumnLayout {
         }
 
         Button {
-            id: cropButton
+            id: saveButton
 
             text: qsTr("Save")
             onClicked: {
@@ -135,8 +136,8 @@ ColumnLayout {
                     "height": Math.round(cropRect.cropHeight * scale)
                 }
 
-                root.ctx.crop(outRect.x, outRect.y, outRect.width,
-                              outRect.height)
+                root.ctx.saveCropAs(outRect.x, outRect.y, outRect.width,
+                                    outRect.height)
             }
 
             Layout.preferredHeight: 30

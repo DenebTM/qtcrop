@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -6,7 +6,7 @@
 #include "context_obj.h"
 
 int main(int argc, char *argv[]) {
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
 
   QQmlApplicationEngine engine;
 

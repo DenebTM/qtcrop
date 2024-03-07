@@ -12,7 +12,9 @@ public:
 
     Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY filenameChanged FINAL)
 
-    Q_INVOKABLE void crop(int x, int y, int width, int height);
+    Q_INVOKABLE void chooseFile();
+    Q_INVOKABLE void saveCrop(int x, int y, int width, int height, QString &outFilename);
+    Q_INVOKABLE void saveCropAs(int x, int y, int width, int height);
 
     QString filename() const { return _filename; }
 
@@ -20,6 +22,7 @@ public:
 
 signals:
     void filenameChanged();
+    void saveCancelled();
     void ffmpegDone();
 
 private:
