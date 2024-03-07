@@ -19,7 +19,6 @@ void ContextObj::chooseFile() {
   const bool accepted = dialog.exec() == QDialog::Accepted;
   if (accepted && !dialog.selectedFiles().isEmpty()) {
     setFilename(dialog.selectedFiles().constFirst());
-    emit filenameChanged();
   }
 }
 

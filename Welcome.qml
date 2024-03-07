@@ -4,7 +4,7 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 
-ColumnLayout {
+Item {
     id: root
 
     // context object
@@ -15,15 +15,34 @@ ColumnLayout {
         onFilenameChanged: videoLoader.active = true
     }
 
-    Text {
-        Layout.alignment: Qt.AlignCenter
-        text: "Select a video to start"
-        color: palette.text
+    SystemPalette {
+        id: palette
     }
 
-    Button {
-        Layout.alignment: Qt.AlignCenter
-        text: "Open..."
-        onClicked: root.ctx.chooseFile()
+    ColumnLayout {
+        anchors.centerIn: parent
+
+        Text {
+            Layout.alignment: Qt.AlignCenter
+            text: qsTr("Select or drop a video here to start")
+            color: palette.text
+        }
+
+        Button {
+            Layout.alignment: Qt.AlignCenter
+            text: qsTr("Open...")
+            onClicked: root.ctx.chooseFile()
+        }
+    }
+
+    DropArea {
+        anchors.fill: parent
+
+        onDropped: event => {
+                       if (event.urls.length > 0) {
+                           const url = new URL(event.urls[0])
+                           root.ctx.filename = url.pathname
+                       }
+                   }
     }
 }

@@ -6,7 +6,7 @@ Window {
     height: 480
     visible: true
     title: qsTr("qtcrop: ") + (videoLoader.item ? videoLoader.item.ctx.filename : qsTr(
-                                                     "No file"))
+                                                      "No file"))
 
     SystemPalette {
         id: palette
@@ -21,7 +21,7 @@ Window {
         active: !videoLoader.active
         onLoaded: item.ctx = ctx
 
-        anchors.centerIn: parent
+        anchors.fill: parent
     }
 
     Loader {

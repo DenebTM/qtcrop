@@ -17,7 +17,10 @@ public:
 
   QString filename() const { return _filename; }
 
-  void setFilename(const QString &filename) { this->_filename = filename; }
+  void setFilename(const QString &filename) {
+    this->_filename = filename;
+    emit filenameChanged();
+  }
 
 signals:
   void filenameChanged();
