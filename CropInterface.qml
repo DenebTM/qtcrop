@@ -79,7 +79,7 @@ ColumnLayout {
             }
 
             muted: true
-            Component.onCompleted: play()
+            onSourceChanged: pause()
 
             // prevents a segfault
             Component.onDestruction: stop()
