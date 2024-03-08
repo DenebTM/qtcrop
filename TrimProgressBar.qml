@@ -12,6 +12,12 @@ Item {
 
     readonly property real barScale: root.width / (to - from)
 
+    readonly property alias playHandleDragActive: area.drag.active
+    signal playHandleMoved
+
+    signal playHandlePressed
+    signal playHandleReleased
+
     SystemPalette {
         id: palette
     }
@@ -32,11 +38,11 @@ Item {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
 
-            x: trimStart * barScale
-            width: (trimEnd - trimStart) * barScale
+            x: root.trimStart * root.barScale
+            width: (root.trimEnd - root.trimStart) * root.barScale
             height: 20
 
-            color: palette.light
+            color: palette.midlight
         }
 
         Rectangle {
@@ -46,23 +52,63 @@ Item {
             anchors.bottom: parent.bottom
 
             x: 0
-            width: (value - from) * barScale
+            width: (root.value - root.from) * root.barScale
 
             color: palette.highlight
 
             Rectangle {
                 id: playbackHandle
 
-                anchors.horizontalCenter: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-
                 width: 5
                 height: 10
+
+                anchors.horizontalCenter: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                states: State {
+                    name: "dragged"
+                    when: area.pressed
+                    AnchorChanges {
+                        target: playbackHandle
+                        anchors.horizontalCenter: undefined
+                    }
+                }
+
+                MouseArea {
+                    id: area
+
+                    anchors.fill: parent
+
+                    drag.threshold: 0
+                    drag.target: parent
+                    drag.axis: Drag.XAxis
+                    drag.minimumX: root.trimStart * root.barScale
+                    drag.maximumX: root.trimEnd * root.barScale
+
+                    // root.value is set by handle while dragged; restored
+                    // to previous value/binding afterwards
+                    Binding {
+                        when: area.drag.active
+                        root.value: playbackHandle.x / root.barScale
+                        restoreMode: Binding.RestoreBindingOrValue
+                    }
+
+                    onPositionChanged: root.playHandleMoved()
+
+                    onPressed: root.playHandlePressed()
+                    onReleased: root.playHandleReleased()
+                }
             }
         }
     }
 
-    component TrimHandle: Rectangle {}
+    component TrimHandle: Rectangle {
+        MouseArea {
+            drag.target: parent
+            drag.axis: Qt.XAxis
+
+            cursorShape: Qt.SizeHorCursor
+        }
+    }
 
     TrimHandle {
         id: handleTrimStart

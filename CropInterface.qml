@@ -98,16 +98,6 @@ ColumnLayout {
             Layout.preferredHeight: 30
         }
 
-        // Slider {
-        //     id: videoProgress
-
-        //     from: 0
-        //     to: video.duration
-        //     value: video.position
-        //     Layout.fillWidth: true
-
-        //     onMoved: video.position = value
-        // }
         TrimProgressBar {
             id: videoProgress
 
@@ -116,6 +106,21 @@ ColumnLayout {
             from: 0
             to: video.duration
             value: video.position
+
+            onPlayHandleMoved: {
+                video.position = value
+            }
+
+            property var prevPlaybackState
+            onPlayHandlePressed: {
+                prevPlaybackState = video.playbackState
+                video.pause()
+            }
+            onPlayHandleReleased: {
+                if (prevPlaybackState == MediaPlayer.PlayingState) {
+                    video.play()
+                }
+            }
 
             trimStart: video.duration * 0.2
             trimEnd: video.duration * 0.8
