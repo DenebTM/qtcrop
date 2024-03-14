@@ -3,6 +3,10 @@ import QtQuick
 Item {
     id: root
 
+    function middleOf(item) {
+        return Math.round(item.x + (item.width / 2))
+    }
+
     required property real from
     required property real to
     required property real value
@@ -55,66 +59,95 @@ Item {
             width: (root.value - root.from) * root.barScale
 
             color: palette.highlight
+        }
 
-            Rectangle {
-                id: playbackHandle
+        Rectangle {
+            id: handlePlayback
 
-                width: 5
-                height: 10
+            width: 5
+            height: 10
 
-                anchors.horizontalCenter: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                states: State {
-                    name: "dragged"
-                    when: area.pressed
-                    AnchorChanges {
-                        target: playbackHandle
-                        anchors.horizontalCenter: undefined
-                    }
-                }
+            anchors.horizontalCenter: backdropProgress.right
+            anchors.verticalCenter: parent.verticalCenter
+        }
 
-                MouseArea {
-                    id: area
+        Rectangle {
+            id: handleTrimStart
 
-                    anchors.fill: parent
+            width: 5
+            height: 10
 
-                    drag.threshold: 0
-                    drag.target: parent
-                    drag.axis: Drag.XAxis
-                    drag.minimumX: root.trimStart * root.barScale
-                    drag.maximumX: root.trimEnd * root.barScale
+            anchors.horizontalCenter: backdropTrim.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
 
-                    // root.value is set by handle while dragged; restored
-                    // to previous value/binding afterwards
-                    Binding {
-                        when: area.drag.active
-                        root.value: playbackHandle.x / root.barScale
-                        restoreMode: Binding.RestoreBindingOrValue
-                    }
+        Rectangle {
+            id: handleTrimEnd
 
-                    onPositionChanged: root.playHandleMoved()
+            width: 5
+            height: 10
 
-                    onPressed: root.playHandlePressed()
-                    onReleased: root.playHandleReleased()
-                }
+            anchors.horizontalCenter: backdropTrim.right
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    MouseArea {
+        id: area
+
+        anchors.fill: backdropFull
+
+        drag.threshold: 0
+        drag.target: undefined
+        drag.axis: Drag.XAxis
+        drag.minimumX: root.trimStart * root.barScale - (handlePlayback.width / 2)
+        drag.maximumX: root.trimEnd * root.barScale - (handlePlayback.width / 2)
+
+        onPositionChanged: root.playHandleMoved()
+
+        onPressed: {
+            drag.target = getDragTarget()
+            root.playHandlePressed()
+        }
+
+        onReleased: {
+            drag.target = undefined
+            root.playHandleReleased()
+        }
+
+        readonly property real dragThreshold: 10
+        function getDragTarget() {
+            for (const handle of [handleTrimEnd, handleTrimStart]) {
+                if (Math.abs(mouseX - middleOf(handle)) <= dragThreshold)
+                    return handle
             }
+
+            return handlePlayback
         }
     }
 
-    component TrimHandle: Rectangle {
-        MouseArea {
-            drag.target: parent
-            drag.axis: Qt.XAxis
+    // root.value is set by handle while dragged; restored
+    // to previous value/binding afterwards
+    Binding {
+        when: area.drag.active
+        root.value: root.middleOf(handlePlayback) / root.barScale
+        restoreMode: Binding.RestoreBindingOrValue
+    }
 
-            cursorShape: Qt.SizeHorCursor
+    states: State {
+        name: "dragged"
+        when: area.pressed
+        AnchorChanges {
+            target: handlePlayback
+            anchors.horizontalCenter: undefined
         }
-    }
-
-    TrimHandle {
-        id: handleTrimStart
-    }
-
-    TrimHandle {
-        id: handleTrimEnd
+        AnchorChanges {
+            target: handleTrimStart
+            anchors.horizontalCenter: undefined
+        }
+        AnchorChanges {
+            target: handleTrimEnd
+            anchors.horizontalCenter: undefined
+        }
     }
 }
